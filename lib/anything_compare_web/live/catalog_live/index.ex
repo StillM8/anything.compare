@@ -4,18 +4,8 @@ defmodule AnythingCompareWeb.CatalogLive.Index do
   @sample_schema %{
     "brand" => %{"type" => "string", "label" => "Brand", "filterable" => true},
     "model" => %{"type" => "string", "label" => "Model", "filterable" => false},
-    "battery_mah" => %{
-      "type" => "number",
-      "label" => "Battery",
-      "unit" => "mAh",
-      "visual" => "bar"
-    },
-    "display_size" => %{
-      "type" => "number",
-      "label" => "Display",
-      "unit" => "\"",
-      "visual" => "bar"
-    },
+    "battery_mah" => %{"type" => "number", "label" => "Battery", "unit" => "mAh", "visual" => "bar"},
+    "display_size" => %{"type" => "number", "label" => "Display", "unit" => "\"", "visual" => "bar"},
     "ram_gb" => %{"type" => "number", "label" => "RAM", "unit" => "GB", "visual" => "bar"},
     "storage_gb" => %{"type" => "number", "label" => "Storage", "unit" => "GB", "visual" => "bar"}
   }
@@ -23,7 +13,7 @@ defmodule AnythingCompareWeb.CatalogLive.Index do
   @impl true
   def mount(_params, session, socket) do
     current_category = session["current_category"] || "root"
-    {:ok, assign(socket, :current_category, current_category)}
+    {:ok, assign(socket, current_category: current_category, selected_slugs: MapSet.new())}
   end
 
   @impl true
@@ -81,6 +71,33 @@ defmodule AnythingCompareWeb.CatalogLive.Index do
     {:noreply, assign(socket, products: filtered, query: query)}
   end
 
+  @impl true
+  def handle_event("toggle-select", %{"slug" => slug}, socket) do
+    selected = socket.assigns.selected_slugs
+
+    selected =
+      if MapSet.member?(selected, slug) do
+        MapSet.delete(selected, slug)
+      else
+        MapSet.put(selected, slug)
+      end
+
+    {:noreply, assign(socket, :selected_slugs, selected)}
+  end
+
+  @impl true
+  def handle_event("compare-selected", _, socket) do
+    slugs = MapSet.to_list(socket.assigns.selected_slugs)
+
+    if length(slugs) >= 2 do
+      category = socket.assigns.category
+      url = ~p"/#{category}/compare/#{Enum.join(slugs, "-vs-")}"
+      {:noreply, push_navigate(socket, to: url)}
+    else
+      {:noreply, socket}
+    end
+  end
+
   defp resolve_category(assigns, params) do
     case assigns[:current_category] do
       "root" -> params["category"] || "root"
@@ -135,6 +152,11 @@ defmodule AnythingCompareWeb.CatalogLive.Index do
               </div>
 
               <div class="flex items-center gap-4">
+                <%= if MapSet.size(@selected_slugs) >= 2 do %>
+                  <button phx-click="compare-selected" class="btn btn-primary btn-sm">
+                    Compare {MapSet.size(@selected_slugs)} Selected
+                  </button>
+                <% end %>
                 <label class="join items-center gap-2 input input-bordered input-sm">
                   <.icon name="hero-magnifying-glass" class="w-4 h-4 opacity-40" />
                   <input
@@ -157,37 +179,42 @@ defmodule AnythingCompareWeb.CatalogLive.Index do
             <% else %>
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 <%= for product <- @products do %>
-                  <.link
-                    navigate={~p"/#{@category}/product/#{product.slug}"}
-                    class="card bg-base-200 hover:bg-base-300 transition-all duration-200 p-5 rounded-xl border border-base-300 block"
-                  >
-                    <h2 class="font-semibold text-lg">{product.name}</h2>
-                    <div class="mt-3 space-y-1.5 text-sm">
-                      <%= for {key, meta} <- Enum.take(@schema, 4) do %>
-                        <div class="flex justify-between">
-                          <span class="opacity-60">{meta["label"]}</span>
-                          <span class="font-medium">
-                            {render_spec_value(product.specs[key], meta)}
-                          </span>
-                        </div>
+                  <div class={[
+                    "card bg-base-200 hover:bg-base-300 transition-all duration-200 p-5 rounded-xl border block relative",
+                    if(MapSet.member?(@selected_slugs, product.slug), do: "border-primary ring-2 ring-primary/20", else: "border-base-300")
+                  ]}>
+                    <button
+                      phx-click="toggle-select"
+                      phx-value-slug={product.slug}
+                      class={[
+                        "absolute top-3 right-3 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors",
+                        if(MapSet.member?(@selected_slugs, product.slug),
+                          do: "bg-primary border-primary text-primary-content",
+                          else: "border-base-content/30 hover:border-base-content/60"
+                        )
+                      ]}
+                    >
+                      <%= if MapSet.member?(@selected_slugs, product.slug) do %>
+                        <.icon name="hero-check" class="w-3 h-3" />
                       <% end %>
-                    </div>
-                  </.link>
+                    </button>
+
+                    <.link navigate={~p"/#{@category}/product/#{product.slug}"} class="block">
+                      <h2 class="font-semibold text-lg pr-6">{product.name}</h2>
+                      <div class="mt-3 space-y-1.5 text-sm">
+                        <%= for {key, meta} <- Enum.take(@schema, 4) do %>
+                          <div class="flex justify-between">
+                            <span class="opacity-60">{meta["label"]}</span>
+                            <span class="font-medium">
+                              {render_spec_value(product.specs[key], meta)}
+                            </span>
+                          </div>
+                        <% end %>
+                      </div>
+                    </.link>
+                  </div>
                 <% end %>
               </div>
-
-              <%= if length(@all_products || []) > 1 do %>
-                <div class="mt-8 text-center">
-                  <.link
-                    navigate={
-                      ~p"/#{@category}/compare/#{Enum.join(Enum.take(@all_products, 2) |> Enum.map(& &1.slug), "-vs-")}"
-                    }
-                    class="btn btn-primary"
-                  >
-                    Compare Top 2
-                  </.link>
-                </div>
-              <% end %>
             <% end %>
           </div>
         <% end %>
