@@ -2,16 +2,34 @@ defmodule AnythingCompareWeb.CatalogLive.Compare do
   use AnythingCompareWeb, :live_view
 
   @spec_order ~w(
-    brand model display_size ram_gb storage_gb battery_mah os stability
+    brand model display_size resolution refresh_rate processor ram_gb storage_gb
+    battery_mah charging_w wireless_charging camera_main_mp camera_ultrawide_mp
+    camera_telephoto_mp front_camera_mp os weight_g thickness_mm ip_rating
+    headphone_jack stability
   )
 
   @sample_schema %{
     "brand" => %{"type" => "string", "label" => "Brand", "filterable" => true},
     "model" => %{"type" => "string", "label" => "Model", "filterable" => false},
-    "battery_mah" => %{"type" => "number", "label" => "Battery", "unit" => "mAh"},
     "display_size" => %{"type" => "number", "label" => "Display", "unit" => "\""},
+    "resolution" => %{"type" => "string", "label" => "Resolution"},
+    "refresh_rate" => %{"type" => "number", "label" => "Refresh Rate", "unit" => "Hz"},
+    "processor" => %{"type" => "string", "label" => "Processor"},
     "ram_gb" => %{"type" => "number", "label" => "RAM", "unit" => "GB"},
-    "storage_gb" => %{"type" => "number", "label" => "Storage", "unit" => "GB"}
+    "storage_gb" => %{"type" => "number", "label" => "Storage", "unit" => "GB"},
+    "battery_mah" => %{"type" => "number", "label" => "Battery", "unit" => "mAh"},
+    "charging_w" => %{"type" => "number", "label" => "Charging", "unit" => "W"},
+    "wireless_charging" => %{"type" => "string", "label" => "Wireless Charging"},
+    "camera_main_mp" => %{"type" => "number", "label" => "Main Camera", "unit" => "MP"},
+    "camera_ultrawide_mp" => %{"type" => "number", "label" => "Ultrawide", "unit" => "MP"},
+    "camera_telephoto_mp" => %{"type" => "number", "label" => "Telephoto", "unit" => "MP"},
+    "front_camera_mp" => %{"type" => "number", "label" => "Front Camera", "unit" => "MP"},
+    "os" => %{"type" => "string", "label" => "OS"},
+    "weight_g" => %{"type" => "number", "label" => "Weight", "unit" => "g"},
+    "thickness_mm" => %{"type" => "number", "label" => "Thickness", "unit" => "mm"},
+    "ip_rating" => %{"type" => "string", "label" => "Water Resistance"},
+    "headphone_jack" => %{"type" => "string", "label" => "Headphone Jack"},
+    "stability" => %{"type" => "subjective", "label" => "Stability"}
   }
 
   # TODO: Screen size visualization — render a scaled bezel + notch diagram
@@ -159,73 +177,88 @@ defmodule AnythingCompareWeb.CatalogLive.Compare do
               <p class="text-lg">No products found</p>
             </div>
           <% else %>
-            <div class="rounded-xl border border-base-300 bg-base-100 shadow-sm">
-              <div class="overflow-x-auto">
-              <table class="w-full text-sm">
-                <thead>
-                  <tr class="bg-base-200">
-                    <th class="sticky left-0 z-10 bg-base-200 px-2 sm:px-4 py-2 sm:py-3 text-left font-semibold min-w-[110px] sm:min-w-[160px] text-xs sm:text-sm">
-                      Spec
-                    </th>
-                    <%= for product <- @products do %>
-                      <th class="px-2 sm:px-3 py-2 sm:py-3 text-left font-semibold min-w-[120px] sm:min-w-[170px] relative group">
-                        <div class="flex items-center justify-between gap-1 mb-1">
-                          <button
-                            id={"swap-btn-#{product.slug}"}
-                            phx-click="toggle-swap"
-                            phx-value-slug={product.slug}
-                            class="text-xs sm:text-base leading-tight font-semibold text-left hover:text-primary transition-colors flex items-center gap-1 truncate max-w-[90px] sm:max-w-none"
-                          >
-                            {product.name}
-                            <.icon name="hero-chevron-down" class="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0 opacity-40" />
-                          </button>
-                          <button
-                            phx-click="remove-product"
-                            phx-value-slug={product.slug}
-                            class="btn btn-ghost btn-xs p-0.5 opacity-0 group-hover:opacity-100 transition-opacity text-error shrink-0"
-                          >
-                            <.icon name="hero-x-mark" class="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                          </button>
-                        </div>
-                        <.link
-                          navigate={~p"/#{@category}/product/#{product.slug}"}
-                          class="text-[10px] sm:text-[11px] opacity-50 hover:opacity-100"
-                        >
-                          Details →
-                        </.link>
-                      </th>
-                    <% end %>
-                    <th class="px-1 sm:px-3 py-2 sm:py-3 text-left min-w-[52px] w-[52px] sm:min-w-[100px] sm:w-[100px]">
-                      <button
-                        id="add-btn"
-                        phx-click="toggle-add"
-                        class="btn btn-ghost btn-xs sm:btn-sm w-full flex items-center justify-center gap-0.5 sm:gap-1 text-base-content/40 hover:text-base-content/70 transition-colors"
-                      >
-                        <.icon name="hero-plus" class="w-4 h-4 sm:w-5 sm:h-5" />
-                        <span class="text-[10px] sm:text-xs">Add</span>
-                      </button>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <%= for {spec_key, spec_meta} <- @schema do %>
-                    <tr class="border-t border-base-300">
-                      <td class="sticky left-0 z-10 bg-base-100 px-2 sm:px-4 py-2 sm:py-3 font-medium whitespace-nowrap text-xs sm:text-sm">
-                        <div class="flex items-center gap-1 sm:gap-2">
-                          <span>{spec_meta["label"]}</span>
-                          <span class="text-[10px] sm:text-xs opacity-40">{spec_meta["unit"]}</span>
-                        </div>
-                      </td>
-                      <%= for product <- @products do %>
-                        <td class="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm">
-                          {spec_value(product.specs[spec_key], spec_meta)}
-                        </td>
-                      <% end %>
-                      <td class="px-2 sm:px-4 py-2 sm:py-3 text-center opacity-20 text-xs sm:text-sm">—</td>
+            <div class="flex rounded-xl border border-base-300 bg-base-100 shadow-sm overflow-hidden">
+              <%!-- fixed spec column --%>
+              <div class="flex-none min-w-[110px] sm:min-w-[160px]">
+                <table class="w-full text-xs sm:text-sm">
+                  <thead>
+                    <tr class="bg-base-200">
+                      <th class="px-2 sm:px-4 py-2 sm:py-3 text-left font-semibold">Spec</th>
                     </tr>
-                  <% end %>
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    <%= for {spec_key, spec_meta} <- @schema do %>
+                      <tr class="border-t border-base-300">
+                        <td class="bg-base-100 px-2 sm:px-4 py-2 sm:py-3 font-medium whitespace-nowrap">
+                          <div class="flex items-center gap-1 sm:gap-2">
+                            <span>{spec_meta["label"]}</span>
+                            <span class="text-[10px] sm:text-xs opacity-40">{spec_meta["unit"]}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+
+              <%!-- scrollable product columns --%>
+              <div class="overflow-x-auto flex-1">
+                <table class="w-full text-xs sm:text-sm">
+                  <thead>
+                    <tr class="bg-base-200">
+                      <%= for product <- @products do %>
+                        <th class="px-2 sm:px-3 py-2 sm:py-3 text-left font-semibold min-w-[120px] sm:min-w-[170px] max-w-[200px] group">
+                          <div class="flex items-center justify-between gap-1 mb-1">
+                            <button
+                              id={"swap-btn-#{product.slug}"}
+                              phx-click="toggle-swap"
+                              phx-value-slug={product.slug}
+                              class="text-xs sm:text-base leading-tight font-semibold text-left hover:text-primary transition-colors flex items-center gap-1 truncate max-w-[90px] sm:max-w-[130px]"
+                            >
+                              {product.name}
+                              <.icon name="hero-chevron-down" class="w-2.5 h-2.5 sm:w-3 sm:h-3 shrink-0 opacity-40" />
+                            </button>
+                            <button
+                              phx-click="remove-product"
+                              phx-value-slug={product.slug}
+                              class="btn btn-ghost btn-xs p-0.5 opacity-0 group-hover:opacity-100 transition-opacity text-error shrink-0"
+                            >
+                              <.icon name="hero-x-mark" class="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                            </button>
+                          </div>
+                          <.link
+                            navigate={~p"/#{@category}/product/#{product.slug}"}
+                            class="text-[10px] sm:text-[11px] opacity-50 hover:opacity-100"
+                          >
+                            Details →
+                          </.link>
+                        </th>
+                      <% end %>
+                      <th class="px-1 sm:px-3 py-2 sm:py-3 text-left min-w-[52px] w-[52px] sm:min-w-[100px] sm:w-[100px]">
+                        <button
+                          id="add-btn"
+                          phx-click="toggle-add"
+                          class="btn btn-ghost btn-xs sm:btn-sm w-full flex items-center justify-center gap-0.5 sm:gap-1 text-base-content/40 hover:text-base-content/70 transition-colors"
+                        >
+                          <.icon name="hero-plus" class="w-4 h-4 sm:w-5 sm:h-5" />
+                          <span class="text-[10px] sm:text-xs">Add</span>
+                        </button>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <%= for {spec_key, spec_meta} <- @schema do %>
+                      <tr class="border-t border-base-300">
+                        <%= for product <- @products do %>
+                          <td class="px-2 sm:px-4 py-2 sm:py-3">
+                            {spec_value(product.specs[spec_key], spec_meta)}
+                          </td>
+                        <% end %>
+                        <td class="px-2 sm:px-4 py-2 sm:py-3 text-center opacity-20">—</td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
               </div>
             </div>
 

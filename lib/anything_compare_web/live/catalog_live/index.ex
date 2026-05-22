@@ -2,22 +2,27 @@ defmodule AnythingCompareWeb.CatalogLive.Index do
   use AnythingCompareWeb, :live_view
 
   @sample_schema %{
-    "brand" => %{"type" => "string", "label" => "Brand", "filterable" => true},
-    "model" => %{"type" => "string", "label" => "Model", "filterable" => false},
-    "battery_mah" => %{
-      "type" => "number",
-      "label" => "Battery",
-      "unit" => "mAh",
-      "visual" => "bar"
-    },
-    "display_size" => %{
-      "type" => "number",
-      "label" => "Display",
-      "unit" => "\"",
-      "visual" => "bar"
-    },
-    "ram_gb" => %{"type" => "number", "label" => "RAM", "unit" => "GB", "visual" => "bar"},
-    "storage_gb" => %{"type" => "number", "label" => "Storage", "unit" => "GB", "visual" => "bar"}
+    "brand" => %{"type" => "string", "label" => "Brand"},
+    "model" => %{"type" => "string", "label" => "Model"},
+    "display_size" => %{"type" => "number", "label" => "Display", "unit" => "\""},
+    "resolution" => %{"type" => "string", "label" => "Resolution"},
+    "refresh_rate" => %{"type" => "number", "label" => "Refresh Rate", "unit" => "Hz"},
+    "processor" => %{"type" => "string", "label" => "Processor"},
+    "ram_gb" => %{"type" => "number", "label" => "RAM", "unit" => "GB"},
+    "storage_gb" => %{"type" => "number", "label" => "Storage", "unit" => "GB"},
+    "battery_mah" => %{"type" => "number", "label" => "Battery", "unit" => "mAh"},
+    "charging_w" => %{"type" => "number", "label" => "Charging", "unit" => "W"},
+    "wireless_charging" => %{"type" => "string", "label" => "Wireless Charging"},
+    "camera_main_mp" => %{"type" => "number", "label" => "Main Camera", "unit" => "MP"},
+    "camera_ultrawide_mp" => %{"type" => "number", "label" => "Ultrawide", "unit" => "MP"},
+    "camera_telephoto_mp" => %{"type" => "number", "label" => "Telephoto", "unit" => "MP"},
+    "front_camera_mp" => %{"type" => "number", "label" => "Front Camera", "unit" => "MP"},
+    "os" => %{"type" => "string", "label" => "OS"},
+    "weight_g" => %{"type" => "number", "label" => "Weight", "unit" => "g"},
+    "thickness_mm" => %{"type" => "number", "label" => "Thickness", "unit" => "mm"},
+    "ip_rating" => %{"type" => "string", "label" => "Water Resistance"},
+    "headphone_jack" => %{"type" => "string", "label" => "Headphone Jack"},
+    "stability" => %{"type" => "subjective", "label" => "Stability"}
   }
 
   @impl true

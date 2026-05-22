@@ -23,7 +23,7 @@ defmodule AnythingCompare.DataPipeline do
       end)
     end)
 
-    AnythingCompare.Cache.Storage.reload_category(category)
+    AnythingCompare.Cache.Storage.reload_category(category, schema_data)
 
     {:ok, length(products)}
   end

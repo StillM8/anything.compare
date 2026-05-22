@@ -1,154 +1,93 @@
 alias AnythingCompare.Repo
 alias AnythingCompare.Products.Product
 
+phones_schema = %{
+  "brand" => %{"type" => "string", "label" => "Brand"},
+  "model" => %{"type" => "string", "label" => "Model"},
+  "display_size" => %{"type" => "number", "label" => "Display", "unit" => "\""},
+  "resolution" => %{"type" => "string", "label" => "Resolution"},
+  "refresh_rate" => %{"type" => "number", "label" => "Refresh Rate", "unit" => "Hz"},
+  "processor" => %{"type" => "string", "label" => "Processor"},
+  "ram_gb" => %{"type" => "number", "label" => "RAM", "unit" => "GB"},
+  "storage_gb" => %{"type" => "number", "label" => "Storage", "unit" => "GB"},
+  "battery_mah" => %{"type" => "number", "label" => "Battery", "unit" => "mAh"},
+  "charging_w" => %{"type" => "number", "label" => "Charging", "unit" => "W"},
+  "wireless_charging" => %{"type" => "string", "label" => "Wireless Charging"},
+  "camera_main_mp" => %{"type" => "number", "label" => "Main Camera", "unit" => "MP"},
+  "camera_ultrawide_mp" => %{"type" => "number", "label" => "Ultrawide", "unit" => "MP"},
+  "camera_telephoto_mp" => %{"type" => "number", "label" => "Telephoto", "unit" => "MP"},
+  "front_camera_mp" => %{"type" => "number", "label" => "Front Camera", "unit" => "MP"},
+  "os" => %{"type" => "string", "label" => "OS"},
+  "weight_g" => %{"type" => "number", "label" => "Weight", "unit" => "g"},
+  "thickness_mm" => %{"type" => "number", "label" => "Thickness", "unit" => "mm"},
+  "ip_rating" => %{"type" => "string", "label" => "Water Resistance"},
+  "headphone_jack" => %{"type" => "string", "label" => "Headphone Jack"},
+  "stability" => %{"type" => "subjective", "label" => "Stability"}
+}
+
 phones = [
-  %{
-    slug: "apple-iphone-15-pro",
-    name: "iPhone 15 Pro",
-    category: "phones",
-    specs: %{
-      "brand" => "Apple",
-      "model" => "iPhone 15 Pro",
-      "battery_mah" => 3274,
-      "display_size" => 6.1,
-      "ram_gb" => 8,
-      "storage_gb" => 256,
-      "os" => "iOS 17",
-      "stability" => [
-        %{"value" => "74%", "source" => "GSM Arena", "numeric_value" => 74.0},
-        %{"value" => "68%", "source" => "AnandTech", "numeric_value" => 68.0},
-        %{"value" => "71%", "source" => "Tom's Guide", "numeric_value" => 71.0}
-      ]
-    }
-  },
-  %{
-    slug: "apple-iphone-15-pro-max",
-    name: "iPhone 15 Pro Max",
-    category: "phones",
-    specs: %{
-      "brand" => "Apple",
-      "model" => "iPhone 15 Pro Max",
-      "battery_mah" => 4422,
-      "display_size" => 6.7,
-      "ram_gb" => 8,
-      "storage_gb" => 256,
-      "os" => "iOS 17",
-      "stability" => [
-        %{"value" => "78%", "source" => "GSM Arena", "numeric_value" => 78.0},
-        %{"value" => "72%", "source" => "AnandTech", "numeric_value" => 72.0}
-      ]
-    }
-  },
-  %{
-    slug: "samsung-galaxy-s24",
-    name: "Galaxy S24",
-    category: "phones",
-    specs: %{
-      "brand" => "Samsung",
-      "model" => "Galaxy S24",
-      "battery_mah" => 4000,
-      "display_size" => 6.2,
-      "ram_gb" => 8,
-      "storage_gb" => 128,
-      "os" => "Android 14",
-      "stability" => [
-        %{"value" => "62%", "source" => "GSM Arena", "numeric_value" => 62.0},
-        %{"value" => "58%", "source" => "AnandTech", "numeric_value" => 58.0}
-      ]
-    }
-  },
-  %{
-    slug: "samsung-galaxy-s24-ultra",
-    name: "Galaxy S24 Ultra",
-    category: "phones",
-    specs: %{
-      "brand" => "Samsung",
-      "model" => "Galaxy S24 Ultra",
-      "battery_mah" => 5000,
-      "display_size" => 6.8,
-      "ram_gb" => 12,
-      "storage_gb" => 256,
-      "os" => "Android 14",
-      "stability" => [
-        %{"value" => "81%", "source" => "GSM Arena", "numeric_value" => 81.0},
-        %{"value" => "76%", "source" => "AnandTech", "numeric_value" => 76.0},
-        %{"value" => "79%", "source" => "Tom's Guide", "numeric_value" => 79.0}
-      ]
-    }
-  },
-  %{
-    slug: "google-pixel-8",
-    name: "Pixel 8",
-    category: "phones",
-    specs: %{
-      "brand" => "Google",
-      "model" => "Pixel 8",
-      "battery_mah" => 4485,
-      "display_size" => 6.2,
-      "ram_gb" => 8,
-      "storage_gb" => 128,
-      "os" => "Android 14",
-      "stability" => [
-        %{"value" => "70%", "source" => "GSM Arena", "numeric_value" => 70.0},
-        %{"value" => "65%", "source" => "AnandTech", "numeric_value" => 65.0}
-      ]
-    }
-  },
-  %{
-    slug: "google-pixel-8-pro",
-    name: "Pixel 8 Pro",
-    category: "phones",
-    specs: %{
-      "brand" => "Google",
-      "model" => "Pixel 8 Pro",
-      "battery_mah" => 5050,
-      "display_size" => 6.7,
-      "ram_gb" => 12,
-      "storage_gb" => 128,
-      "os" => "Android 14",
-      "stability" => [
-        %{"value" => "75%", "source" => "GSM Arena", "numeric_value" => 75.0},
-        %{"value" => "71%", "source" => "AnandTech", "numeric_value" => 71.0},
-        %{"value" => "73%", "source" => "Tom's Guide", "numeric_value" => 73.0}
-      ]
-    }
-  },
-  %{
-    slug: "oneplus-12",
-    name: "OnePlus 12",
-    category: "phones",
-    specs: %{
-      "brand" => "OnePlus",
-      "model" => "12",
-      "battery_mah" => 5400,
-      "display_size" => 6.82,
-      "ram_gb" => 16,
-      "storage_gb" => 256,
-      "os" => "Android 14",
-      "stability" => [
-        %{"value" => "77%", "source" => "GSM Arena", "numeric_value" => 77.0},
-        %{"value" => "73%", "source" => "AnandTech", "numeric_value" => 73.0}
-      ]
-    }
-  },
-  %{
-    slug: "xiaomi-14",
-    name: "Xiaomi 14",
-    category: "phones",
-    specs: %{
-      "brand" => "Xiaomi",
-      "model" => "14",
-      "battery_mah" => 4610,
-      "display_size" => 6.36,
-      "ram_gb" => 12,
-      "storage_gb" => 256,
-      "os" => "Android 14",
-      "stability" => [
-        %{"value" => "69%", "source" => "GSM Arena", "numeric_value" => 69.0},
-        %{"value" => "64%", "source" => "AnandTech", "numeric_value" => 64.0}
-      ]
-    }
-  }
+  # -- Apple --
+  %{slug: "apple-iphone-15-pro", name: "iPhone 15 Pro", specs: %{"brand" => "Apple", "model" => "iPhone 15 Pro", "display_size" => 6.1, "resolution" => "2556x1179", "refresh_rate" => 120, "processor" => "A17 Pro", "ram_gb" => 8, "storage_gb" => 256, "battery_mah" => 3274, "charging_w" => 27, "wireless_charging" => "MagSafe 15W", "camera_main_mp" => 48, "camera_ultrawide_mp" => 12, "camera_telephoto_mp" => 12, "front_camera_mp" => 12, "os" => "iOS 17", "weight_g" => 187, "thickness_mm" => 8.25, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "74%", "source" => "GSM Arena", "numeric_value" => 74.0}, %{"value" => "68%", "source" => "AnandTech", "numeric_value" => 68.0}, %{"value" => "71%", "source" => "Tom's Guide", "numeric_value" => 71.0}]}},
+  %{slug: "apple-iphone-15-pro-max", name: "iPhone 15 Pro Max", specs: %{"brand" => "Apple", "model" => "iPhone 15 Pro Max", "display_size" => 6.7, "resolution" => "2796x1290", "refresh_rate" => 120, "processor" => "A17 Pro", "ram_gb" => 8, "storage_gb" => 256, "battery_mah" => 4422, "charging_w" => 27, "wireless_charging" => "MagSafe 15W", "camera_main_mp" => 48, "camera_ultrawide_mp" => 12, "camera_telephoto_mp" => 12, "front_camera_mp" => 12, "os" => "iOS 17", "weight_g" => 221, "thickness_mm" => 8.25, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "78%", "source" => "GSM Arena", "numeric_value" => 78.0}, %{"value" => "72%", "source" => "AnandTech", "numeric_value" => 72.0}]}},
+  %{slug: "apple-iphone-15", name: "iPhone 15", specs: %{"brand" => "Apple", "model" => "iPhone 15", "display_size" => 6.1, "resolution" => "2556x1179", "refresh_rate" => 60, "processor" => "A16 Bionic", "ram_gb" => 6, "storage_gb" => 128, "battery_mah" => 3349, "charging_w" => 27, "wireless_charging" => "MagSafe 15W", "camera_main_mp" => 48, "camera_ultrawide_mp" => 12, "front_camera_mp" => 12, "os" => "iOS 17", "weight_g" => 171, "thickness_mm" => 7.8, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "72%", "source" => "GSM Arena", "numeric_value" => 72.0}, %{"value" => "67%", "source" => "AnandTech", "numeric_value" => 67.0}]}},
+  %{slug: "apple-iphone-15-plus", name: "iPhone 15 Plus", specs: %{"brand" => "Apple", "model" => "iPhone 15 Plus", "display_size" => 6.7, "resolution" => "2796x1290", "refresh_rate" => 60, "processor" => "A16 Bionic", "ram_gb" => 6, "storage_gb" => 128, "battery_mah" => 4383, "charging_w" => 27, "wireless_charging" => "MagSafe 15W", "camera_main_mp" => 48, "camera_ultrawide_mp" => 12, "front_camera_mp" => 12, "os" => "iOS 17", "weight_g" => 201, "thickness_mm" => 7.8, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "70%", "source" => "GSM Arena", "numeric_value" => 70.0}]}},
+  %{slug: "apple-iphone-14-pro", name: "iPhone 14 Pro", specs: %{"brand" => "Apple", "model" => "iPhone 14 Pro", "display_size" => 6.1, "resolution" => "2556x1179", "refresh_rate" => 120, "processor" => "A16 Bionic", "ram_gb" => 6, "storage_gb" => 256, "battery_mah" => 3200, "charging_w" => 27, "wireless_charging" => "MagSafe 15W", "camera_main_mp" => 48, "camera_ultrawide_mp" => 12, "camera_telephoto_mp" => 12, "front_camera_mp" => 12, "os" => "iOS 16", "weight_g" => 206, "thickness_mm" => 7.85, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "76%", "source" => "GSM Arena", "numeric_value" => 76.0}]}},
+  %{slug: "apple-iphone-14", name: "iPhone 14", specs: %{"brand" => "Apple", "model" => "iPhone 14", "display_size" => 6.1, "resolution" => "2532x1170", "refresh_rate" => 60, "processor" => "A15 Bionic", "ram_gb" => 6, "storage_gb" => 128, "battery_mah" => 3279, "charging_w" => 20, "wireless_charging" => "MagSafe 15W", "camera_main_mp" => 12, "camera_ultrawide_mp" => 12, "front_camera_mp" => 12, "os" => "iOS 16", "weight_g" => 172, "thickness_mm" => 7.8, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "69%", "source" => "GSM Arena", "numeric_value" => 69.0}]}},
+
+  # -- Samsung --
+  %{slug: "samsung-galaxy-s24-ultra", name: "Galaxy S24 Ultra", specs: %{"brand" => "Samsung", "model" => "Galaxy S24 Ultra", "display_size" => 6.8, "resolution" => "3120x1440", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 3", "ram_gb" => 12, "storage_gb" => 256, "battery_mah" => 5000, "charging_w" => 45, "wireless_charging" => "15W", "camera_main_mp" => 200, "camera_ultrawide_mp" => 12, "camera_telephoto_mp" => 50, "front_camera_mp" => 12, "os" => "Android 14", "weight_g" => 232, "thickness_mm" => 8.6, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "81%", "source" => "GSM Arena", "numeric_value" => 81.0}, %{"value" => "76%", "source" => "AnandTech", "numeric_value" => 76.0}, %{"value" => "79%", "source" => "Tom's Guide", "numeric_value" => 79.0}]}},
+  %{slug: "samsung-galaxy-s24-plus", name: "Galaxy S24+", specs: %{"brand" => "Samsung", "model" => "Galaxy S24+", "display_size" => 6.7, "resolution" => "3120x1440", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 3 / Exynos 2400", "ram_gb" => 12, "storage_gb" => 256, "battery_mah" => 4900, "charging_w" => 45, "wireless_charging" => "15W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 12, "camera_telephoto_mp" => 10, "front_camera_mp" => 12, "os" => "Android 14", "weight_g" => 196, "thickness_mm" => 7.7, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "77%", "source" => "GSM Arena", "numeric_value" => 77.0}]}},
+  %{slug: "samsung-galaxy-s24", name: "Galaxy S24", specs: %{"brand" => "Samsung", "model" => "Galaxy S24", "display_size" => 6.2, "resolution" => "2340x1080", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 3 / Exynos 2400", "ram_gb" => 8, "storage_gb" => 128, "battery_mah" => 4000, "charging_w" => 25, "wireless_charging" => "15W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 12, "camera_telephoto_mp" => 10, "front_camera_mp" => 12, "os" => "Android 14", "weight_g" => 167, "thickness_mm" => 7.6, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "62%", "source" => "GSM Arena", "numeric_value" => 62.0}, %{"value" => "58%", "source" => "AnandTech", "numeric_value" => 58.0}]}},
+  %{slug: "samsung-galaxy-s23-ultra", name: "Galaxy S23 Ultra", specs: %{"brand" => "Samsung", "model" => "Galaxy S23 Ultra", "display_size" => 6.8, "resolution" => "3088x1440", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 2", "ram_gb" => 12, "storage_gb" => 256, "battery_mah" => 5000, "charging_w" => 45, "wireless_charging" => "15W", "camera_main_mp" => 200, "camera_ultrawide_mp" => 12, "camera_telephoto_mp" => 10, "front_camera_mp" => 12, "os" => "Android 13", "weight_g" => 234, "thickness_mm" => 8.9, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "80%", "source" => "GSM Arena", "numeric_value" => 80.0}]}},
+  %{slug: "samsung-galaxy-s23", name: "Galaxy S23", specs: %{"brand" => "Samsung", "model" => "Galaxy S23", "display_size" => 6.1, "resolution" => "2340x1080", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 2", "ram_gb" => 8, "storage_gb" => 128, "battery_mah" => 3900, "charging_w" => 25, "wireless_charging" => "15W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 12, "camera_telephoto_mp" => 10, "front_camera_mp" => 12, "os" => "Android 13", "weight_g" => 168, "thickness_mm" => 7.6, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "73%", "source" => "GSM Arena", "numeric_value" => 73.0}]}},
+  %{slug: "samsung-galaxy-z-fold6", name: "Galaxy Z Fold6", specs: %{"brand" => "Samsung", "model" => "Galaxy Z Fold6", "display_size" => 7.6, "resolution" => "2160x1856", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 3", "ram_gb" => 12, "storage_gb" => 256, "battery_mah" => 4400, "charging_w" => 25, "wireless_charging" => "15W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 12, "camera_telephoto_mp" => 10, "front_camera_mp" => 10, "os" => "Android 14", "weight_g" => 239, "thickness_mm" => 5.6, "ip_rating" => "IP48", "headphone_jack" => "No", "stability" => [%{"value" => "75%", "source" => "GSM Arena", "numeric_value" => 75.0}]}},
+  %{slug: "samsung-galaxy-z-flip6", name: "Galaxy Z Flip6", specs: %{"brand" => "Samsung", "model" => "Galaxy Z Flip6", "display_size" => 6.7, "resolution" => "2640x1080", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 3", "ram_gb" => 12, "storage_gb" => 256, "battery_mah" => 4000, "charging_w" => 25, "wireless_charging" => "15W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 12, "front_camera_mp" => 10, "os" => "Android 14", "weight_g" => 187, "thickness_mm" => 6.9, "ip_rating" => "IP48", "headphone_jack" => "No", "stability" => [%{"value" => "71%", "source" => "GSM Arena", "numeric_value" => 71.0}]}},
+  %{slug: "samsung-galaxy-a55", name: "Galaxy A55", specs: %{"brand" => "Samsung", "model" => "Galaxy A55", "display_size" => 6.6, "resolution" => "2340x1080", "refresh_rate" => 120, "processor" => "Exynos 1480", "ram_gb" => 8, "storage_gb" => 128, "battery_mah" => 5000, "charging_w" => 25, "camera_main_mp" => 50, "camera_ultrawide_mp" => 12, "front_camera_mp" => 32, "os" => "Android 14", "weight_g" => 213, "thickness_mm" => 8.2, "ip_rating" => "IP67", "headphone_jack" => "No", "stability" => [%{"value" => "65%", "source" => "GSM Arena", "numeric_value" => 65.0}]}},
+
+  # -- Google --
+  %{slug: "google-pixel-8-pro", name: "Pixel 8 Pro", specs: %{"brand" => "Google", "model" => "Pixel 8 Pro", "display_size" => 6.7, "resolution" => "2992x1344", "refresh_rate" => 120, "processor" => "Tensor G3", "ram_gb" => 12, "storage_gb" => 128, "battery_mah" => 5050, "charging_w" => 30, "wireless_charging" => "23W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 48, "camera_telephoto_mp" => 48, "front_camera_mp" => 10.5, "os" => "Android 14", "weight_g" => 213, "thickness_mm" => 8.8, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "75%", "source" => "GSM Arena", "numeric_value" => 75.0}, %{"value" => "71%", "source" => "AnandTech", "numeric_value" => 71.0}, %{"value" => "73%", "source" => "Tom's Guide", "numeric_value" => 73.0}]}},
+  %{slug: "google-pixel-8", name: "Pixel 8", specs: %{"brand" => "Google", "model" => "Pixel 8", "display_size" => 6.2, "resolution" => "2400x1080", "refresh_rate" => 120, "processor" => "Tensor G3", "ram_gb" => 8, "storage_gb" => 128, "battery_mah" => 4485, "charging_w" => 27, "wireless_charging" => "18W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 12, "front_camera_mp" => 10.5, "os" => "Android 14", "weight_g" => 187, "thickness_mm" => 8.9, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "70%", "source" => "GSM Arena", "numeric_value" => 70.0}, %{"value" => "65%", "source" => "AnandTech", "numeric_value" => 65.0}]}},
+  %{slug: "google-pixel-8a", name: "Pixel 8a", specs: %{"brand" => "Google", "model" => "Pixel 8a", "display_size" => 6.1, "resolution" => "2400x1080", "refresh_rate" => 120, "processor" => "Tensor G3", "ram_gb" => 8, "storage_gb" => 128, "battery_mah" => 4492, "charging_w" => 18, "camera_main_mp" => 64, "camera_ultrawide_mp" => 13, "front_camera_mp" => 13, "os" => "Android 14", "weight_g" => 188, "thickness_mm" => 8.9, "ip_rating" => "IP67", "headphone_jack" => "No", "stability" => [%{"value" => "68%", "source" => "GSM Arena", "numeric_value" => 68.0}]}},
+  %{slug: "google-pixel-7-pro", name: "Pixel 7 Pro", specs: %{"brand" => "Google", "model" => "Pixel 7 Pro", "display_size" => 6.7, "resolution" => "3120x1440", "refresh_rate" => 120, "processor" => "Tensor G2", "ram_gb" => 12, "storage_gb" => 128, "battery_mah" => 5000, "charging_w" => 30, "wireless_charging" => "23W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 12, "camera_telephoto_mp" => 48, "front_camera_mp" => 10.8, "os" => "Android 13", "weight_g" => 212, "thickness_mm" => 8.9, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "74%", "source" => "GSM Arena", "numeric_value" => 74.0}]}},
+  %{slug: "google-pixel-7", name: "Pixel 7", specs: %{"brand" => "Google", "model" => "Pixel 7", "display_size" => 6.3, "resolution" => "2400x1080", "refresh_rate" => 90, "processor" => "Tensor G2", "ram_gb" => 8, "storage_gb" => 128, "battery_mah" => 4355, "charging_w" => 30, "wireless_charging" => "20W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 12, "front_camera_mp" => 10.8, "os" => "Android 13", "weight_g" => 197, "thickness_mm" => 8.7, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "71%", "source" => "GSM Arena", "numeric_value" => 71.0}]}},
+
+  # -- OnePlus --
+  %{slug: "oneplus-12", name: "OnePlus 12", specs: %{"brand" => "OnePlus", "model" => "12", "display_size" => 6.82, "resolution" => "3168x1440", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 3", "ram_gb" => 16, "storage_gb" => 256, "battery_mah" => 5400, "charging_w" => 100, "wireless_charging" => "50W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 48, "camera_telephoto_mp" => 64, "front_camera_mp" => 32, "os" => "Android 14", "weight_g" => 220, "thickness_mm" => 9.15, "ip_rating" => "IP65", "headphone_jack" => "No", "stability" => [%{"value" => "77%", "source" => "GSM Arena", "numeric_value" => 77.0}, %{"value" => "73%", "source" => "AnandTech", "numeric_value" => 73.0}]}},
+  %{slug: "oneplus-12r", name: "OnePlus 12R", specs: %{"brand" => "OnePlus", "model" => "12R", "display_size" => 6.78, "resolution" => "2780x1264", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 2", "ram_gb" => 16, "storage_gb" => 256, "battery_mah" => 5500, "charging_w" => 100, "camera_main_mp" => 50, "camera_ultrawide_mp" => 8, "camera_macro_mp" => 2, "front_camera_mp" => 16, "os" => "Android 14", "weight_g" => 207, "thickness_mm" => 8.8, "ip_rating" => "IP64", "headphone_jack" => "No", "stability" => [%{"value" => "70%", "source" => "GSM Arena", "numeric_value" => 70.0}]}},
+  %{slug: "oneplus-open", name: "OnePlus Open", specs: %{"brand" => "OnePlus", "model" => "Open", "display_size" => 7.82, "resolution" => "2268x2440", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 2", "ram_gb" => 16, "storage_gb" => 512, "battery_mah" => 4805, "charging_w" => 67, "camera_main_mp" => 48, "camera_ultrawide_mp" => 48, "camera_telephoto_mp" => 64, "front_camera_mp" => 20, "os" => "Android 14", "weight_g" => 245, "thickness_mm" => 5.8, "ip_rating" => "IPX4", "headphone_jack" => "No", "stability" => [%{"value" => "76%", "source" => "GSM Arena", "numeric_value" => 76.0}]}},
+  %{slug: "oneplus-11", name: "OnePlus 11", specs: %{"brand" => "OnePlus", "model" => "11", "display_size" => 6.7, "resolution" => "3216x1440", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 2", "ram_gb" => 16, "storage_gb" => 256, "battery_mah" => 5000, "charging_w" => 100, "camera_main_mp" => 50, "camera_ultrawide_mp" => 48, "camera_telephoto_mp" => 32, "front_camera_mp" => 16, "os" => "Android 13", "weight_g" => 205, "thickness_mm" => 8.5, "ip_rating" => "IP64", "headphone_jack" => "No", "stability" => [%{"value" => "73%", "source" => "GSM Arena", "numeric_value" => 73.0}]}},
+
+  # -- Xiaomi --
+  %{slug: "xiaomi-14", name: "Xiaomi 14", specs: %{"brand" => "Xiaomi", "model" => "14", "display_size" => 6.36, "resolution" => "2670x1200", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 3", "ram_gb" => 12, "storage_gb" => 256, "battery_mah" => 4610, "charging_w" => 90, "wireless_charging" => "50W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 50, "camera_telephoto_mp" => 50, "front_camera_mp" => 32, "os" => "Android 14", "weight_g" => 193, "thickness_mm" => 8.28, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "69%", "source" => "GSM Arena", "numeric_value" => 69.0}, %{"value" => "64%", "source" => "AnandTech", "numeric_value" => 64.0}]}},
+  %{slug: "xiaomi-14-pro", name: "Xiaomi 14 Pro", specs: %{"brand" => "Xiaomi", "model" => "14 Pro", "display_size" => 6.73, "resolution" => "3200x1440", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 3", "ram_gb" => 12, "storage_gb" => 256, "battery_mah" => 4880, "charging_w" => 120, "wireless_charging" => "50W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 50, "camera_telephoto_mp" => 50, "front_camera_mp" => 32, "os" => "Android 14", "weight_g" => 223, "thickness_mm" => 8.49, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "72%", "source" => "GSM Arena", "numeric_value" => 72.0}]}},
+  %{slug: "xiaomi-14-ultra", name: "Xiaomi 14 Ultra", specs: %{"brand" => "Xiaomi", "model" => "14 Ultra", "display_size" => 6.73, "resolution" => "3200x1440", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 3", "ram_gb" => 16, "storage_gb" => 512, "battery_mah" => 5000, "charging_w" => 90, "wireless_charging" => "80W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 50, "camera_telephoto_mp" => 50, "front_camera_mp" => 32, "os" => "Android 14", "weight_g" => 224, "thickness_mm" => 9.2, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "74%", "source" => "GSM Arena", "numeric_value" => 74.0}]}},
+  %{slug: "xiaomi-redmi-note-13-pro", name: "Redmi Note 13 Pro+", specs: %{"brand" => "Xiaomi", "model" => "Redmi Note 13 Pro+", "display_size" => 6.67, "resolution" => "2712x1220", "refresh_rate" => 120, "processor" => "Dimensity 7200-Ultra", "ram_gb" => 8, "storage_gb" => 256, "battery_mah" => 5000, "charging_w" => 120, "camera_main_mp" => 200, "camera_ultrawide_mp" => 8, "front_camera_mp" => 16, "os" => "Android 13", "weight_g" => 204, "thickness_mm" => 8.9, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "63%", "source" => "GSM Arena", "numeric_value" => 63.0}]}},
+
+  # -- Nothing --
+  %{slug: "nothing-phone-2", name: "Phone (2)", specs: %{"brand" => "Nothing", "model" => "Phone (2)", "display_size" => 6.7, "resolution" => "2412x1080", "refresh_rate" => 120, "processor" => "Snapdragon 8+ Gen 1", "ram_gb" => 12, "storage_gb" => 256, "battery_mah" => 4700, "charging_w" => 45, "wireless_charging" => "15W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 50, "front_camera_mp" => 32, "os" => "Nothing OS 2.0", "weight_g" => 201, "thickness_mm" => 8.6, "ip_rating" => "IP54", "headphone_jack" => "No", "stability" => [%{"value" => "67%", "source" => "GSM Arena", "numeric_value" => 67.0}]}},
+  %{slug: "nothing-phone-2a", name: "Phone (2a)", specs: %{"brand" => "Nothing", "model" => "Phone (2a)", "display_size" => 6.7, "resolution" => "2412x1080", "refresh_rate" => 120, "processor" => "Dimensity 7200 Pro", "ram_gb" => 12, "storage_gb" => 256, "battery_mah" => 5000, "charging_w" => 45, "camera_main_mp" => 50, "camera_ultrawide_mp" => 50, "front_camera_mp" => 32, "os" => "Nothing OS 2.5", "weight_g" => 190, "thickness_mm" => 8.6, "ip_rating" => "IP54", "headphone_jack" => "No", "stability" => [%{"value" => "65%", "source" => "GSM Arena", "numeric_value" => 65.0}]}},
+
+  # -- Motorola --
+  %{slug: "motorola-edge-50-pro", name: "Edge 50 Pro", specs: %{"brand" => "Motorola", "model" => "Edge 50 Pro", "display_size" => 6.7, "resolution" => "2712x1220", "refresh_rate" => 144, "processor" => "Snapdragon 7 Gen 3", "ram_gb" => 12, "storage_gb" => 256, "battery_mah" => 4500, "charging_w" => 125, "wireless_charging" => "50W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 13, "camera_telephoto_mp" => 10, "front_camera_mp" => 50, "os" => "Android 14", "weight_g" => 186, "thickness_mm" => 8.2, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "66%", "source" => "GSM Arena", "numeric_value" => 66.0}]}},
+  %{slug: "motorola-razr-50-ultra", name: "Razr 50 Ultra", specs: %{"brand" => "Motorola", "model" => "Razr 50 Ultra", "display_size" => 6.9, "resolution" => "2640x1080", "refresh_rate" => 165, "processor" => "Snapdragon 8s Gen 3", "ram_gb" => 12, "storage_gb" => 256, "battery_mah" => 4000, "charging_w" => 45, "wireless_charging" => "15W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 50, "front_camera_mp" => 32, "os" => "Android 14", "weight_g" => 189, "thickness_mm" => 7.2, "ip_rating" => "IPX8", "headphone_jack" => "No", "stability" => [%{"value" => "69%", "source" => "GSM Arena", "numeric_value" => 69.0}]}},
+
+  # -- Sony --
+  %{slug: "sony-xperia-1-vi", name: "Xperia 1 VI", specs: %{"brand" => "Sony", "model" => "Xperia 1 VI", "display_size" => 6.5, "resolution" => "2340x1080", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 3", "ram_gb" => 12, "storage_gb" => 256, "battery_mah" => 5000, "charging_w" => 30, "camera_main_mp" => 48, "camera_ultrawide_mp" => 12, "camera_telephoto_mp" => 12, "front_camera_mp" => 12, "os" => "Android 14", "weight_g" => 192, "thickness_mm" => 8.2, "ip_rating" => "IP68", "headphone_jack" => "Yes", "stability" => [%{"value" => "70%", "source" => "GSM Arena", "numeric_value" => 70.0}]}},
+  %{slug: "sony-xperia-5-v", name: "Xperia 5 V", specs: %{"brand" => "Sony", "model" => "Xperia 5 V", "display_size" => 6.1, "resolution" => "2520x1080", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 2", "ram_gb" => 8, "storage_gb" => 128, "battery_mah" => 5000, "charging_w" => 30, "camera_main_mp" => 48, "camera_ultrawide_mp" => 12, "front_camera_mp" => 12, "os" => "Android 13", "weight_g" => 183, "thickness_mm" => 8.6, "ip_rating" => "IP68", "headphone_jack" => "Yes", "stability" => [%{"value" => "68%", "source" => "GSM Arena", "numeric_value" => 68.0}]}},
+
+  # -- Asus --
+  %{slug: "asus-zenfone-11-ultra", name: "Zenfone 11 Ultra", specs: %{"brand" => "Asus", "model" => "Zenfone 11 Ultra", "display_size" => 6.78, "resolution" => "2400x1080", "refresh_rate" => 144, "processor" => "Snapdragon 8 Gen 3", "ram_gb" => 16, "storage_gb" => 512, "battery_mah" => 5500, "charging_w" => 65, "wireless_charging" => "15W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 13, "camera_telephoto_mp" => 32, "front_camera_mp" => 32, "os" => "Android 14", "weight_g" => 224, "thickness_mm" => 8.9, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "71%", "source" => "GSM Arena", "numeric_value" => 71.0}]}},
+  %{slug: "asus-rog-phone-8", name: "ROG Phone 8", specs: %{"brand" => "Asus", "model" => "ROG Phone 8", "display_size" => 6.78, "resolution" => "2400x1080", "refresh_rate" => 165, "processor" => "Snapdragon 8 Gen 3", "ram_gb" => 16, "storage_gb" => 256, "battery_mah" => 5500, "charging_w" => 65, "wireless_charging" => "15W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 13, "camera_telephoto_mp" => 32, "front_camera_mp" => 32, "os" => "Android 14", "weight_g" => 225, "thickness_mm" => 8.9, "ip_rating" => "IP68", "headphone_jack" => "Yes", "stability" => [%{"value" => "72%", "source" => "GSM Arena", "numeric_value" => 72.0}]}},
+
+  # -- Honor --
+  %{slug: "honor-magic-6-pro", name: "Magic 6 Pro", specs: %{"brand" => "Honor", "model" => "Magic 6 Pro", "display_size" => 6.8, "resolution" => "2800x1280", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 3", "ram_gb" => 12, "storage_gb" => 512, "battery_mah" => 5600, "charging_w" => 80, "wireless_charging" => "66W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 50, "camera_telephoto_mp" => 180, "front_camera_mp" => 50, "os" => "Android 14", "weight_g" => 229, "thickness_mm" => 8.9, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "73%", "source" => "GSM Arena", "numeric_value" => 73.0}]}},
+
+  # -- Oppo --
+  %{slug: "oppo-find-x7-ultra", name: "Find X7 Ultra", specs: %{"brand" => "Oppo", "model" => "Find X7 Ultra", "display_size" => 6.82, "resolution" => "3168x1440", "refresh_rate" => 120, "processor" => "Snapdragon 8 Gen 3", "ram_gb" => 16, "storage_gb" => 512, "battery_mah" => 5000, "charging_w" => 100, "wireless_charging" => "50W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 50, "camera_telephoto_mp" => 50, "front_camera_mp" => 32, "os" => "Android 14", "weight_g" => 221, "thickness_mm" => 9.5, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "75%", "source" => "GSM Arena", "numeric_value" => 75.0}]}},
+  %{slug: "oppo-reno-11-pro", name: "Reno 11 Pro", specs: %{"brand" => "Oppo", "model" => "Reno 11 Pro", "display_size" => 6.7, "resolution" => "2412x1080", "refresh_rate" => 120, "processor" => "Snapdragon 8+ Gen 1", "ram_gb" => 12, "storage_gb" => 256, "battery_mah" => 4600, "charging_w" => 80, "camera_main_mp" => 50, "camera_ultrawide_mp" => 8, "camera_telephoto_mp" => 32, "front_camera_mp" => 32, "os" => "Android 14", "weight_g" => 190, "thickness_mm" => 8.26, "ip_rating" => "IP65", "headphone_jack" => "No", "stability" => [%{"value" => "64%", "source" => "GSM Arena", "numeric_value" => 64.0}]}},
+
+  # -- Vivo --
+  %{slug: "vivo-x100-pro", name: "X100 Pro", specs: %{"brand" => "Vivo", "model" => "X100 Pro", "display_size" => 6.78, "resolution" => "2800x1260", "refresh_rate" => 120, "processor" => "Dimensity 9300", "ram_gb" => 16, "storage_gb" => 512, "battery_mah" => 5400, "charging_w" => 100, "wireless_charging" => "50W", "camera_main_mp" => 50, "camera_ultrawide_mp" => 50, "camera_telephoto_mp" => 64, "front_camera_mp" => 32, "os" => "Android 14", "weight_g" => 221, "thickness_mm" => 8.9, "ip_rating" => "IP68", "headphone_jack" => "No", "stability" => [%{"value" => "76%", "source" => "GSM Arena", "numeric_value" => 76.0}]}},
 ]
 
 Enum.each(phones, fn attrs ->
@@ -157,7 +96,7 @@ Enum.each(phones, fn attrs ->
     id: Ecto.UUID.generate(),
     name: attrs.name,
     slug: attrs.slug,
-    category: attrs.category,
+    category: "phones",
     specs: attrs.specs
   })
   |> Repo.insert(
@@ -166,4 +105,7 @@ Enum.each(phones, fn attrs ->
   )
 end)
 
-IO.puts("Seeded #{length(phones)} phones into the phone category")
+AnythingCompare.Cache.Storage.update_category("phones", AnythingCompare.Catalog.list_products("phones"))
+AnythingCompare.Cache.Storage.update_category_schema("phones", phones_schema)
+
+IO.puts("Seeded #{length(phones)} phones with #{map_size(phones_schema)} spec fields")
