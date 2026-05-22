@@ -103,3 +103,26 @@
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
 /* This file is for your main application CSS */
+
+/* Comparison matrix sticky column */
+table td:first-child,
+table th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+}
+
+/* Number input filter styling */
+input[type="text"].input {
+  outline: none;
+}
+
+/* Smooth transitions for diff highlights */
+tr {
+  transition: background-color 0.2s ease;
+}
+
+/* Tabular numbers for spec values */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}

@@ -2,9 +2,10 @@ import Config
 
 # Configure your database
 config :anything_compare, AnythingCompare.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "clawd",
+  password: "",
   hostname: "localhost",
+  port: 5433,
   database: "anything_compare_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,

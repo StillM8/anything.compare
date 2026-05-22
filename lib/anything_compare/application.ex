@@ -1,6 +1,4 @@
 defmodule AnythingCompare.Application do
-  # See https://hexdocs.pm/elixir/Application.html
-  # for more information on OTP Applications
   @moduledoc false
 
   use Application
@@ -12,20 +10,15 @@ defmodule AnythingCompare.Application do
       AnythingCompare.Repo,
       {DNSCluster, query: Application.get_env(:anything_compare, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: AnythingCompare.PubSub},
-      # Start a worker by calling: AnythingCompare.Worker.start_link(arg)
-      # {AnythingCompare.Worker, arg},
-      # Start to serve requests, typically the last entry
+      {Oban, Application.get_env(:anything_compare, Oban)},
+      AnythingCompare.Cache.Storage,
       AnythingCompareWeb.Endpoint
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: AnythingCompare.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
-  # Tell Phoenix to update the endpoint configuration
-  # whenever the application is updated.
   @impl true
   def config_change(changed, _new, removed) do
     AnythingCompareWeb.Endpoint.config_change(changed, removed)
