@@ -5,7 +5,7 @@ phones = [
   %{
     slug: "apple-iphone-15-pro",
     name: "iPhone 15 Pro",
-    category: "phone",
+    category: "phones",
     specs: %{
       "brand" => "Apple",
       "model" => "iPhone 15 Pro",
@@ -24,7 +24,7 @@ phones = [
   %{
     slug: "apple-iphone-15-pro-max",
     name: "iPhone 15 Pro Max",
-    category: "phone",
+    category: "phones",
     specs: %{
       "brand" => "Apple",
       "model" => "iPhone 15 Pro Max",
@@ -42,7 +42,7 @@ phones = [
   %{
     slug: "samsung-galaxy-s24",
     name: "Galaxy S24",
-    category: "phone",
+    category: "phones",
     specs: %{
       "brand" => "Samsung",
       "model" => "Galaxy S24",
@@ -60,7 +60,7 @@ phones = [
   %{
     slug: "samsung-galaxy-s24-ultra",
     name: "Galaxy S24 Ultra",
-    category: "phone",
+    category: "phones",
     specs: %{
       "brand" => "Samsung",
       "model" => "Galaxy S24 Ultra",
@@ -79,7 +79,7 @@ phones = [
   %{
     slug: "google-pixel-8",
     name: "Pixel 8",
-    category: "phone",
+    category: "phones",
     specs: %{
       "brand" => "Google",
       "model" => "Pixel 8",
@@ -97,7 +97,7 @@ phones = [
   %{
     slug: "google-pixel-8-pro",
     name: "Pixel 8 Pro",
-    category: "phone",
+    category: "phones",
     specs: %{
       "brand" => "Google",
       "model" => "Pixel 8 Pro",
@@ -116,7 +116,7 @@ phones = [
   %{
     slug: "oneplus-12",
     name: "OnePlus 12",
-    category: "phone",
+    category: "phones",
     specs: %{
       "brand" => "OnePlus",
       "model" => "12",
@@ -134,7 +134,7 @@ phones = [
   %{
     slug: "xiaomi-14",
     name: "Xiaomi 14",
-    category: "phone",
+    category: "phones",
     specs: %{
       "brand" => "Xiaomi",
       "model" => "14",

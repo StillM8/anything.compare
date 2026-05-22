@@ -65,9 +65,18 @@ defmodule AnythingCompareWeb.CatalogLive.Detail do
             ← Back to {@category}
           </.link>
 
-          <div class="mb-8">
-            <h1 class="text-3xl font-bold">{@product.name}</h1>
-            <p class="text-sm opacity-50 mt-1 capitalize">{@category}</p>
+          <div class="flex items-start justify-between mb-8">
+            <div>
+              <h1 class="text-3xl font-bold">{@product.name}</h1>
+              <p class="text-sm opacity-50 mt-1 capitalize">{@category}</p>
+            </div>
+            <.link
+              navigate={~p"/#{@category}/compare/#{@product.slug}"}
+              class="btn btn-primary btn-sm"
+            >
+              <.icon name="hero-arrows-right-left" class="w-4 h-4" />
+              Compare
+            </.link>
           </div>
 
           <div class="rounded-xl border border-base-300 bg-base-100 overflow-hidden">
