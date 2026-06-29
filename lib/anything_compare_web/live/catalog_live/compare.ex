@@ -154,7 +154,7 @@ defmodule AnythingCompareWeb.CatalogLive.Compare do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_category}>
       <div class="min-h-screen">
-        <div class="max-w-full mx-auto px-2 sm:px-6 py-3 sm:py-8">
+        <div class="max-w-7xl mx-auto px-2 sm:px-6 py-3 sm:py-8">
           <%!-- Header --%>
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
             <div>
