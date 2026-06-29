@@ -15,6 +15,12 @@ defmodule AnythingCompareWeb.Endpoint do
     websocket: [connect_info: [session: @session_options]],
     longpoll: [connect_info: [session: @session_options]]
 
+  # Serve data/{category}/schema.json + data.csv so users can view source files.
+  plug Plug.Static,
+    at: "/data",
+    from: Path.join(File.cwd!(), "data"),
+    gzip: false
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # When code reloading is disabled (e.g., in production),

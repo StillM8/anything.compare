@@ -1,0 +1,117 @@
+{
+  "battery_drain": {
+    "label": "Battery Drain",
+    "type": "subjective"
+  },
+  "battery_mah": {
+    "label": "Battery",
+    "type": "number",
+    "unit": "mAh",
+    "visual": "bar"
+  },
+  "brand": {
+    "label": "Brand",
+    "type": "string"
+  },
+  "camera_main_mp": {
+    "label": "Main Camera",
+    "type": "number",
+    "unit": "MP"
+  },
+  "camera_telephoto_mp": {
+    "label": "Telephoto",
+    "type": "number",
+    "unit": "MP"
+  },
+  "camera_ultrawide_mp": {
+    "label": "Ultrawide",
+    "type": "number",
+    "unit": "MP"
+  },
+  "charging_w": {
+    "label": "Charging",
+    "type": "number",
+    "unit": "W"
+  },
+  "cpu_score": {
+    "label": "CPU Score",
+    "type": "subjective"
+  },
+  "display_max_nits": {
+    "label": "Peak Brightness",
+    "type": "number",
+    "unit": "nits",
+    "visual": "bar"
+  },
+  "display_size": {
+    "label": "Display",
+    "type": "number",
+    "unit": "\""
+  },
+  "front_camera_mp": {
+    "label": "Front Camera",
+    "type": "number",
+    "unit": "MP"
+  },
+  "gpu_score": {
+    "label": "GPU Score",
+    "type": "subjective"
+  },
+  "headphone_jack": {
+    "label": "Headphone Jack",
+    "type": "string"
+  },
+  "ip_rating": {
+    "label": "Water Resistance",
+    "type": "string"
+  },
+  "model": {
+    "label": "Model",
+    "type": "string"
+  },
+  "os": {
+    "label": "OS",
+    "type": "string"
+  },
+  "processor": {
+    "label": "Processor",
+    "type": "string"
+  },
+  "ram_gb": {
+    "label": "RAM",
+    "type": "number",
+    "unit": "GB"
+  },
+  "refresh_rate": {
+    "label": "Refresh Rate",
+    "type": "number",
+    "unit": "Hz"
+  },
+  "resolution": {
+    "label": "Resolution",
+    "type": "string"
+  },
+  "stability": {
+    "label": "Stability",
+    "type": "subjective"
+  },
+  "storage_gb": {
+    "label": "Storage",
+    "type": "number",
+    "unit": "GB"
+  },
+  "thickness_mm": {
+    "label": "Thickness",
+    "type": "number",
+    "unit": "mm"
+  },
+  "weight_g": {
+    "label": "Weight",
+    "type": "number",
+    "unit": "g"
+  },
+  "wireless_charging": {
+    "label": "Wireless Charging",
+    "type": "string"
+  }
+}

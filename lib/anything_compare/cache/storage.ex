@@ -8,12 +8,13 @@ defmodule AnythingCompare.Cache.Storage do
   end
 
   def init(_opts) do
-    :ets.new(@table_name, [:set, :protected, :named_table, read_concurrency: true])
+    :ets.new(@table_name, [:set, :public, :named_table, read_concurrency: true])
     {:ok, %{}, {:continue, :warm_cache}}
   end
 
   def handle_continue(:warm_cache, state) do
     reload_all_categories()
+    warm_schema_from_disk()
     {:noreply, state}
   end
 
@@ -64,5 +65,24 @@ defmodule AnythingCompare.Cache.Storage do
   def reload_all_categories do
     categories = AnythingCompare.Catalog.list_categories()
     Enum.each(categories, &reload_category(&1))
+  end
+
+  # On startup, scan /data/{category}/schema.json files and load them into ETS.
+  # This way compare-view labels/units work without depending on webhook flow.
+  def warm_schema_from_disk do
+    data_root = Path.join([File.cwd!(), "data"])
+
+    if File.exists?(data_root) do
+      data_root
+      |> File.ls!()
+      |> Enum.each(fn category ->
+        schema_path = Path.join([data_root, category, "schema.json"])
+
+        if File.exists?(schema_path) do
+          schema = schema_path |> File.read!() |> Jason.decode!()
+          update_category_schema(category, schema)
+        end
+      end)
+    end
   end
 end
