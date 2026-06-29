@@ -2,7 +2,8 @@ import Config
 
 config :anything_compare,
   ecto_repos: [AnythingCompare.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime],
+  data_repo_url: "https://github.com/StillM8/anything.compare/edit/main/priv/repo/seeds.exs"
 
 config :anything_compare, AnythingCompareWeb.Endpoint,
   url: [host: "localhost"],

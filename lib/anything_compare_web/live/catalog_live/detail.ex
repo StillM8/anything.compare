@@ -164,7 +164,7 @@ defmodule AnythingCompareWeb.CatalogLive.Detail do
               </.link>
               <%= if @dev_routes == true do %>
                 <.link
-                  href="https://github.com/anything-compare/data/edit/main/data/#{@category}/data.csv"
+                  href={Application.fetch_env!(:anything_compare, :data_repo_url)}
                   class="btn btn-ghost btn-sm sm:btn-md gap-1.5"
                 >
                   <.icon name="hero-pencil-square" class="w-4 h-4" /> Edit data
@@ -220,7 +220,7 @@ defmodule AnythingCompareWeb.CatalogLive.Detail do
             <p class="text-xs opacity-40 mt-3">
               Data missing or incorrect?
               <a
-                href="https://github.com/anything-compare/data"
+                href={Application.fetch_env!(:anything_compare, :data_repo_url)}
                 class="underline hover:opacity-100"
               >
                 Contribute on GitHub

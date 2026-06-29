@@ -31,31 +31,18 @@ defmodule AnythingCompare.Comparisons do
         Meta.group_for(key, meta)
       end)
 
-    multi =
-      grouped_map
-      |> Enum.flat_map(fn {_group, specs} ->
-        if length(specs) > 1, do: [specs], else: []
+    grouped_map
+    |> Enum.map(fn {group, specs} ->
+      {group, specs}
+    end)
+    |> Enum.sort_by(fn {group, _} -> {Meta.group_order(group), group} end)
+    |> then(fn sorted ->
+      # Anything that didn't match a known prefix goes to "Other"
+      Enum.reduce(sorted, [], fn
+        {nil, specs}, acc -> acc ++ [{"Other", specs}]
+        {group, specs}, acc -> acc ++ [{group, specs}]
       end)
-
-    singles =
-      grouped_map
-      |> Enum.flat_map(fn {_group, specs} ->
-        if length(specs) == 1, do: specs, else: []
-      end)
-
-    grouped =
-      multi
-      |> Enum.map(fn specs ->
-        group = Meta.group_for(elem(hd(specs), 0), elem(hd(specs), 1))
-        {group, specs, Meta.group_order(group)}
-      end)
-      |> Enum.sort_by(fn {group, _, order} -> {order, group} end)
-
-    if singles == [] do
-      grouped
-    else
-      grouped ++ [{"Other", singles, 99}]
-    end
+    end)
   end
 
   @doc """
@@ -204,27 +191,27 @@ defmodule AnythingCompare.Comparisons.Meta do
   """
   def group_for(key, meta) do
     cond do
-      meta && meta["group"] -> meta["group"]
+      is_map(meta) and meta["group"] -> meta["group"]
       true -> derive_group(key)
     end
   end
 
   @doc """
   Sort order for groups.
+  Performance/Display/Physical on top, Benchmarks last.
   """
-  def group_order("Overview"), do: 1
+  def group_order("Performance"), do: 1
   def group_order("Display"), do: 2
-  def group_order("Performance"), do: 3
-  def group_order("Memory"), do: 4
-  def group_order("Battery"), do: 5
-  def group_order("Camera"), do: 6
-  def group_order("Audio"), do: 7
-  def group_order("Connectivity"), do: 8
-  def group_order("Sensors"), do: 9
-  def group_order("Physical"), do: 10
-  def group_order("Software"), do: 11
+  def group_order("Physical"), do: 3
+  def group_order("Overview"), do: 4
+  def group_order("Memory"), do: 5
+  def group_order("Battery"), do: 6
+  def group_order("Camera"), do: 7
+  def group_order("Software"), do: 8
+  def group_order("Audio"), do: 9
+  def group_order("Connectivity"), do: 10
+  def group_order("Sensors"), do: 11
   def group_order("Benchmarks"), do: 12
-  def group_order("Other"), do: 99
   def group_order(_), do: 50
 
   @doc """
