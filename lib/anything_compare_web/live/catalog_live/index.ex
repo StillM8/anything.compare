@@ -253,12 +253,22 @@ defmodule AnythingCompareWeb.CatalogLive.Index do
   end
 
   defp build_preview_specs(schema) do
-    # Pick 4 interesting specs for card previews, skip brand/model
-    skip = ~w(brand model)
+    # Schema-driven: fields with `"preview": true` show under each card.
+    # `"order": N` controls the order. Falls back to non-brand/model columns
+    # if no preview flag is set, so legacy schemas still render.
+    preview =
+      schema
+      |> Enum.filter(fn {_k, meta} -> meta["preview"] == true end)
+      |> Enum.sort_by(fn {_k, meta} -> meta["order"] || 0 end)
+      |> Enum.take(4)
 
-    schema
-    |> Enum.reject(fn {k, _} -> k in skip end)
-    |> Enum.take(4)
+    if preview == [] do
+      schema
+      |> Enum.reject(fn {k, _} -> k in ~w(brand model) end)
+      |> Enum.take(4)
+    else
+      preview
+    end
   end
 
   defp apply_search(products, query) do

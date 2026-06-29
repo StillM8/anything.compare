@@ -4,6 +4,8 @@
     "type": "subjective"
   },
   "battery_mah": {
+    "preview": true,
+    "order": 1,
     "label": "Battery",
     "type": "number",
     "unit": "mAh",
@@ -44,6 +46,8 @@
     "visual": "bar"
   },
   "display_size": {
+    "preview": true,
+    "order": 2,
     "label": "Display",
     "type": "number",
     "unit": "\""
@@ -70,10 +74,14 @@
     "type": "string"
   },
   "os": {
+    "preview": true,
+    "order": 4,
     "label": "OS",
     "type": "string"
   },
   "processor": {
+    "preview": true,
+    "order": 3,
     "label": "Processor",
     "type": "string"
   },
