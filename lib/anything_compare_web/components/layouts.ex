@@ -35,17 +35,33 @@ defmodule AnythingCompareWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <header class="navbar px-4 sm:px-6 lg:px-8 border-b border-base-300">
+    <header class="navbar px-4 sm:px-6 lg:px-8 nav-glass sticky top-0 z-40">
       <div class="flex-1">
-        <a href="/" class="flex items-center gap-2">
-          <.icon name="hero-arrows-right-left" class="w-5 h-5 text-primary" />
-          <span class="font-bold text-lg">anything.<span class="text-primary">compare</span></span>
+        <a href="/" class="flex items-center gap-2 group">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
+            <.icon name="hero-arrows-right-left" class="w-4 h-4 text-primary-content" />
+          </div>
+          <span class="font-bold text-lg tracking-tight">anything.<span class="gradient-text">compare</span></span>
         </a>
       </div>
       <div class="flex-none flex items-center gap-3">
         <%= if @current_scope && @current_scope != "root" do %>
           <span class="badge badge-outline capitalize text-xs">{@current_scope}</span>
         <% end %>
+        <button
+          id="share-btn"
+          phx-hook=".ShareButton"
+          class="btn btn-ghost btn-sm btn-square relative"
+          title="Share this page"
+        >
+          <.icon name="hero-share" class="w-4 h-4" />
+          <span
+            id="share-toast"
+            class="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] px-2 py-0.5 rounded bg-base-content text-base-100 opacity-0 transition-opacity duration-200 pointer-events-none"
+          >
+            Link copied!
+          </span>
+        </button>
         <.theme_toggle />
       </div>
     </header>
@@ -55,6 +71,29 @@ defmodule AnythingCompareWeb.Layouts do
     </main>
 
     <.flash_group flash={@flash} />
+
+    <script :type={Phoenix.LiveView.ColocatedHook} name=".ShareButton">
+      export default {
+        mounted() {
+          this.el.addEventListener("click", async (e) => {
+            e.preventDefault()
+            const url = window.location.href
+            try {
+              if (navigator.share) {
+                await navigator.share({ url })
+              } else {
+                await navigator.clipboard.writeText(url)
+                const toast = document.getElementById("share-toast")
+                if (toast) {
+                  toast.style.opacity = "1"
+                  setTimeout(() => { toast.style.opacity = "0" }, 1800)
+                }
+              }
+            } catch {}
+          })
+        }
+      }
+    </script>
     """
   end
 
