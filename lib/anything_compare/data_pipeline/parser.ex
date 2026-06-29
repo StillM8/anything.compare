@@ -26,12 +26,13 @@ defmodule AnythingCompare.DataPipeline.Parser do
   end
 
   def parse_csv_rows(rows, schema) do
-    [headers | data_rows] = rows
     schema_keys = Map.keys(schema)
 
-    data_rows
-    |> Enum.map(fn row ->
-      row_data = Enum.zip(headers, row) |> Map.new()
+    rows
+    |> Enum.with_index()
+    |> Enum.reject(fn {row, i} -> i == 0 and length(row) == length(schema_keys) and hd(row) == "battery_drain" end)
+    |> Enum.map(fn {row, _i} ->
+      row_data = schema_keys |> Enum.zip(row) |> Map.new()
 
       specs =
         schema_keys
@@ -50,7 +51,7 @@ defmodule AnythingCompare.DataPipeline.Parser do
 
       %{
         "slug" => slug,
-        "name" => Map.get(row_data, "name") || Map.get(row_data, "model") || slug,
+        "name" => Map.get(row_data, "model") || slug,
         "specs" => specs
       }
     end)
@@ -58,12 +59,20 @@ defmodule AnythingCompare.DataPipeline.Parser do
 
   defp normalize_slug(row_data) do
     brand = Map.get(row_data, "brand", "")
-    model = Map.get(row_data, "model", row_data["name"] || "")
+    model = Map.get(row_data, "model", "")
+    base = "#{brand}-#{model}"
 
-    "#{brand}-#{model}"
-    |> String.downcase()
-    |> String.replace(~r/[^a-z0-9]+/, "-")
-    |> String.trim("-")
+    slug =
+      base
+      |> String.downcase()
+      |> String.replace(~r/[^a-z0-9]+/, "-")
+      |> String.trim("-")
+
+    if slug == "" do
+      "row-#{:erlang.unique_integer([:positive])}"
+    else
+      slug
+    end
   end
 
   defp normalize_number(nil), do: nil
