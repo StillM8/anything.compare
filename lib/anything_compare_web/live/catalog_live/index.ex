@@ -11,7 +11,12 @@ defmodule AnythingCompareWeb.CatalogLive.Index do
     "processor" => %{"type" => "string", "label" => "Processor"},
     "ram_gb" => %{"type" => "number", "label" => "RAM", "unit" => "GB"},
     "storage_gb" => %{"type" => "number", "label" => "Storage", "unit" => "GB"},
-    "battery_mah" => %{"type" => "number", "label" => "Battery", "unit" => "mAh", "visual" => "bar"},
+    "battery_mah" => %{
+      "type" => "number",
+      "label" => "Battery",
+      "unit" => "mAh",
+      "visual" => "bar"
+    },
     "charging_w" => %{"type" => "number", "label" => "Charging", "unit" => "W"},
     "camera_main_mp" => %{"type" => "number", "label" => "Main Camera", "unit" => "MP"},
     "camera_ultrawide_mp" => %{"type" => "number", "label" => "Ultrawide", "unit" => "MP"},
@@ -41,7 +46,8 @@ defmodule AnythingCompareWeb.CatalogLive.Index do
        query: "",
        sort_by: nil,
        sort_dir: :desc,
-       active_filters: %{}
+       active_filters: %{},
+       selected_slugs: MapSet.new()
      )}
   end
 
@@ -117,6 +123,44 @@ defmodule AnythingCompareWeb.CatalogLive.Index do
     filtered = apply_sort(filtered, socket.assigns.sort_by, socket.assigns.sort_dir)
 
     {:noreply, assign(socket, products: filtered, query: query)}
+  end
+
+  @impl true
+  def handle_event("toggle-select", %{"slug" => slug}, socket) do
+    selected = socket.assigns.selected_slugs
+
+    selected =
+      if slug in selected do
+        MapSet.delete(selected, slug)
+      else
+        MapSet.put(selected, slug)
+      end
+
+    {:noreply, assign(socket, :selected_slugs, selected)}
+  end
+
+  @impl true
+  def handle_event("compare-selected", _, socket) do
+    slugs = MapSet.to_list(socket.assigns.selected_slugs)
+
+    case slugs do
+      [] ->
+        {:noreply, socket}
+
+      [single] ->
+        {:noreply, push_navigate(socket, to: ~p"/#{socket.assigns.category}/product/#{single}")}
+
+      selected ->
+        {:noreply,
+         push_navigate(socket,
+           to: ~p"/#{socket.assigns.category}/compare/#{Enum.join(selected, "-vs-")}"
+         )}
+    end
+  end
+
+  @impl true
+  def handle_event("clear-selection", _, socket) do
+    {:noreply, assign(socket, :selected_slugs, MapSet.new())}
   end
 
   @impl true
@@ -299,9 +343,18 @@ defmodule AnythingCompareWeb.CatalogLive.Index do
           <div class="hero-gradient relative overflow-hidden">
             <%!-- Decorative floating orbs --%>
             <div class="absolute inset-0 overflow-hidden pointer-events-none">
-              <div class="absolute top-20 left-10 w-64 h-64 rounded-full bg-primary/5 blur-3xl animate-float"></div>
-              <div class="absolute top-40 right-20 w-48 h-48 rounded-full bg-secondary/5 blur-3xl animate-float" style="animation-delay: 2s"></div>
-              <div class="absolute bottom-20 left-1/3 w-72 h-72 rounded-full bg-accent/4 blur-3xl animate-float" style="animation-delay: 4s"></div>
+              <div class="absolute top-20 left-10 w-64 h-64 rounded-full bg-primary/5 blur-3xl animate-float">
+              </div>
+              <div
+                class="absolute top-40 right-20 w-48 h-48 rounded-full bg-secondary/5 blur-3xl animate-float"
+                style="animation-delay: 2s"
+              >
+              </div>
+              <div
+                class="absolute bottom-20 left-1/3 w-72 h-72 rounded-full bg-accent/4 blur-3xl animate-float"
+                style="animation-delay: 4s"
+              >
+              </div>
             </div>
 
             <div class="max-w-6xl mx-auto px-4 py-20 sm:py-28 relative">
@@ -331,7 +384,9 @@ defmodule AnythingCompareWeb.CatalogLive.Index do
                         <.icon name="hero-cube" class="w-5 h-5 text-primary" />
                       </div>
                       <div class="min-w-0">
-                        <h2 class="text-lg sm:text-xl font-semibold capitalize tracking-tight">{cat}</h2>
+                        <h2 class="text-lg sm:text-xl font-semibold capitalize tracking-tight">
+                          {cat}
+                        </h2>
                         <p class="text-xs opacity-50">
                           {AnythingCompare.Catalog.count_products(cat)} products
                         </p>
@@ -355,7 +410,10 @@ defmodule AnythingCompareWeb.CatalogLive.Index do
             <%!-- Category header banner --%>
             <div class="rounded-2xl bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 border border-base-300/50 p-6 sm:p-8 mb-8">
               <div class="flex items-center gap-2 mb-2">
-                <.link navigate={~p"/"} class="text-xs opacity-40 hover:opacity-80 transition-opacity inline-flex items-center gap-1">
+                <.link
+                  navigate={~p"/"}
+                  class="text-xs opacity-40 hover:opacity-80 transition-opacity inline-flex items-center gap-1"
+                >
                   <.icon name="hero-arrow-left" class="w-3 h-3" /> Home
                 </.link>
                 <span class="text-xs opacity-20">/</span>
@@ -440,6 +498,36 @@ defmodule AnythingCompareWeb.CatalogLive.Index do
               <% end %>
             </div>
 
+            <%= if MapSet.size(@selected_slugs) > 0 do %>
+              <%!-- Compare selection bar --%>
+              <div class="sticky top-4 z-30 mb-4">
+                <div class="glass-panel rounded-xl px-4 py-3 flex items-center justify-between gap-3 shadow-lg">
+                  <div class="flex items-center gap-2 text-sm">
+                    <.icon name="hero-check-circle" class="w-5 h-5 text-primary" />
+                    <span class="font-medium">
+                      {MapSet.size(@selected_slugs)} {if MapSet.size(@selected_slugs) == 1,
+                        do: "product",
+                        else: "products"} selected
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <button
+                      phx-click="compare-selected"
+                      class="btn btn-primary btn-sm gap-1.5"
+                    >
+                      <.icon name="hero-arrows-right-left" class="w-4 h-4" /> Compare
+                    </button>
+                    <button
+                      phx-click="clear-selection"
+                      class="btn btn-ghost btn-sm text-xs opacity-60 hover:opacity-100"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+
             <%= if @products == [] do %>
               <%!-- Empty state --%>
               <div class="text-center py-16 sm:py-24">
@@ -468,9 +556,14 @@ defmodule AnythingCompareWeb.CatalogLive.Index do
               <%!-- Product grid --%>
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
                 <%= for product <- @products do %>
+                  <% is_selected = product.slug in @selected_slugs %>
                   <.link
                     navigate={~p"/#{@category}/product/#{product.slug}"}
-                    class="card card-lift card-glow bg-base-100/60 hover:bg-base-100 p-4 sm:p-5 rounded-xl border border-base-300/50 block group relative"
+                    class={[
+                      "card card-lift bg-base-100/60 hover:bg-base-100 p-4 sm:p-5 rounded-xl border block group relative transition-all duration-200",
+                      is_selected && "border-primary/60 ring-1 ring-primary/30 bg-primary/[0.03]",
+                      !is_selected && "border-base-300/50"
+                    ]}
                   >
                     <div class="flex items-start justify-between mb-3">
                       <div class="min-w-0 flex-1">
@@ -481,8 +574,31 @@ defmodule AnythingCompareWeb.CatalogLive.Index do
                           {product.name}
                         </h2>
                       </div>
-                      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
-                        <.icon name="hero-chevron-right" class="w-3.5 h-3.5 text-primary/40 group-hover:text-primary/70 transition-colors" />
+                      <div class="flex items-center gap-1.5 shrink-0 mt-0.5">
+                        <div
+                          phx-click="toggle-select"
+                          phx-value-slug={product.slug}
+                          phx-click-stop=""
+                          class={[
+                            "w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer transition-all border",
+                            is_selected && "bg-primary border-primary text-primary-content",
+                            !is_selected &&
+                              "border-base-300 hover:border-primary/50 bg-base-200/50 opacity-0 group-hover:opacity-100",
+                            is_selected && "opacity-100"
+                          ]}
+                        >
+                          <%= if is_selected do %>
+                            <.icon name="hero-check" class="w-4 h-4" />
+                          <% else %>
+                            <.icon name="hero-plus" class="w-3.5 h-3.5 opacity-40" />
+                          <% end %>
+                        </div>
+                        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <.icon
+                            name="hero-chevron-right"
+                            class="w-3.5 h-3.5 text-primary/40 group-hover:text-primary/70 transition-colors"
+                          />
+                        </div>
                       </div>
                     </div>
 

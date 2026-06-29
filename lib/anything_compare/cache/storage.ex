@@ -19,10 +19,13 @@ defmodule AnythingCompare.Cache.Storage do
 
   def get_products(category) do
     case :ets.lookup(@table_name, category) do
-      [{^category, products}] -> products
+      [{^category, products}] ->
+        products
+
       [] ->
         # Fallback: query PostgreSQL directly if cache not warmed yet
         products = AnythingCompare.Catalog.list_products(category)
+
         if products != [] do
           update_category(category, products)
           products

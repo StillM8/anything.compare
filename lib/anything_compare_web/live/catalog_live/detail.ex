@@ -22,7 +22,12 @@ defmodule AnythingCompareWeb.CatalogLive.Detail do
     "processor" => %{"type" => "string", "label" => "Processor"},
     "ram_gb" => %{"type" => "number", "label" => "RAM", "unit" => "GB"},
     "storage_gb" => %{"type" => "number", "label" => "Storage", "unit" => "GB"},
-    "battery_mah" => %{"type" => "number", "label" => "Battery", "unit" => "mAh", "visual" => "bar"},
+    "battery_mah" => %{
+      "type" => "number",
+      "label" => "Battery",
+      "unit" => "mAh",
+      "visual" => "bar"
+    },
     "charging_w" => %{"type" => "number", "label" => "Charging", "unit" => "W"},
     "wireless_charging" => %{"type" => "string", "label" => "Wireless Charging"},
     "camera_main_mp" => %{"type" => "number", "label" => "Main Camera", "unit" => "MP"},
@@ -174,7 +179,8 @@ defmodule AnythingCompareWeb.CatalogLive.Detail do
               <div class="rounded-xl border border-base-300 bg-base-100 shadow-sm overflow-hidden">
                 <div class="px-4 sm:px-6 py-3 bg-gradient-to-r from-primary/[0.04] to-transparent border-b border-base-300">
                   <div class="flex items-center gap-2">
-                    <div class="w-1 h-4 rounded-full bg-gradient-to-b from-primary to-secondary"></div>
+                    <div class="w-1 h-4 rounded-full bg-gradient-to-b from-primary to-secondary">
+                    </div>
                     <h2 class="font-semibold text-sm sm:text-base tracking-tight">{group_name}</h2>
                   </div>
                 </div>

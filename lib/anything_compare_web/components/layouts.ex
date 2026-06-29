@@ -41,7 +41,9 @@ defmodule AnythingCompareWeb.Layouts do
           <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
             <.icon name="hero-arrows-right-left" class="w-4 h-4 text-primary-content" />
           </div>
-          <span class="font-bold text-lg tracking-tight">anything.<span class="gradient-text">compare</span></span>
+          <span class="font-bold text-lg tracking-tight">
+            anything.<span class="gradient-text">compare</span>
+          </span>
         </a>
       </div>
       <div class="flex-none flex items-center gap-3">

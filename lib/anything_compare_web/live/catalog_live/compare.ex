@@ -1,49 +1,6 @@
 defmodule AnythingCompareWeb.CatalogLive.Compare do
   use AnythingCompareWeb, :live_view
-
-  @spec_order ~w(
-    brand model display_size resolution refresh_rate processor ram_gb storage_gb
-    battery_mah charging_w wireless_charging camera_main_mp camera_ultrawide_mp
-    camera_telephoto_mp front_camera_mp os weight_g thickness_mm ip_rating
-    headphone_jack stability gpu_score cpu_score battery_drain
-  )
-
-  @spec_groups %{
-    "Overview" => ~w(brand model os),
-    "Display" => ~w(display_size resolution refresh_rate),
-    "Performance" => ~w(processor ram_gb storage_gb),
-    "Battery" => ~w(battery_mah charging_w wireless_charging),
-    "Camera" => ~w(camera_main_mp camera_ultrawide_mp camera_telephoto_mp front_camera_mp),
-    "Physical" => ~w(weight_g thickness_mm ip_rating headphone_jack),
-    "Benchmarks" => ~w(stability gpu_score cpu_score battery_drain)
-  }
-
-  @sample_schema %{
-    "brand" => %{"type" => "string", "label" => "Brand", "filterable" => true},
-    "model" => %{"type" => "string", "label" => "Model", "filterable" => false},
-    "display_size" => %{"type" => "number", "label" => "Display", "unit" => "\""},
-    "resolution" => %{"type" => "string", "label" => "Resolution"},
-    "refresh_rate" => %{"type" => "number", "label" => "Refresh Rate", "unit" => "Hz"},
-    "processor" => %{"type" => "string", "label" => "Processor"},
-    "ram_gb" => %{"type" => "number", "label" => "RAM", "unit" => "GB"},
-    "storage_gb" => %{"type" => "number", "label" => "Storage", "unit" => "GB"},
-    "battery_mah" => %{"type" => "number", "label" => "Battery", "unit" => "mAh", "visual" => "bar"},
-    "charging_w" => %{"type" => "number", "label" => "Charging", "unit" => "W"},
-    "wireless_charging" => %{"type" => "string", "label" => "Wireless Charging"},
-    "camera_main_mp" => %{"type" => "number", "label" => "Main Camera", "unit" => "MP"},
-    "camera_ultrawide_mp" => %{"type" => "number", "label" => "Ultrawide", "unit" => "MP"},
-    "camera_telephoto_mp" => %{"type" => "number", "label" => "Telephoto", "unit" => "MP"},
-    "front_camera_mp" => %{"type" => "number", "label" => "Front Camera", "unit" => "MP"},
-    "os" => %{"type" => "string", "label" => "OS"},
-    "weight_g" => %{"type" => "number", "label" => "Weight", "unit" => "g"},
-    "thickness_mm" => %{"type" => "number", "label" => "Thickness", "unit" => "mm"},
-    "ip_rating" => %{"type" => "string", "label" => "Water Resistance"},
-    "headphone_jack" => %{"type" => "string", "label" => "Headphone Jack"},
-    "stability" => %{"type" => "subjective", "label" => "Stability"},
-    "gpu_score" => %{"type" => "subjective", "label" => "GPU Score"},
-    "cpu_score" => %{"type" => "subjective", "label" => "CPU Score"},
-    "battery_drain" => %{"type" => "subjective", "label" => "Battery Drain", "unit" => "h"}
-  }
+  alias AnythingCompare.Comparisons
 
   @impl true
   def mount(_params, session, socket) do
@@ -68,12 +25,20 @@ defmodule AnythingCompareWeb.CatalogLive.Compare do
     all_products = AnythingCompare.Cache.Storage.get_products(category)
     products = Enum.filter(all_products, &(&1.slug in slug_list))
     schema = AnythingCompare.Cache.Storage.get_schema(category)
-    effective_schema = if schema == %{}, do: @sample_schema, else: schema
+
+    effective_schema =
+      if schema == %{} do
+        Comparisons.derive_schema(all_products)
+      else
+        schema
+      end
+
     names = Enum.map(products, & &1.name)
 
-    ordered_schema = order_schema(effective_schema)
-    grouped_schema = group_schema(ordered_schema)
+    ordered_schema = Comparisons.order_specs(effective_schema)
+    grouped_schema = Comparisons.group_specs(ordered_schema)
     avail = Enum.reject(all_products, &(&1.slug in slug_list))
+    diff_set = diff_specs(products)
 
     {:noreply,
      assign(socket,
@@ -83,6 +48,8 @@ defmodule AnythingCompareWeb.CatalogLive.Compare do
        available: avail,
        slugs: slug_list,
        schema: ordered_schema,
+       schema_map: effective_schema,
+       diff_set: diff_set,
        grouped_schema: grouped_schema,
        page_title: Enum.join(names, " vs "),
        show_add_dropdown: false,
@@ -151,7 +118,13 @@ defmodule AnythingCompareWeb.CatalogLive.Compare do
   @impl true
   def handle_event("toggle-benchmark", %{"key" => key}, socket) do
     current = Map.get(socket.assigns.expanded_benchmarks, key, false)
-    {:noreply, assign(socket, :expanded_benchmarks, Map.put(socket.assigns.expanded_benchmarks, key, not current))}
+
+    {:noreply,
+     assign(
+       socket,
+       :expanded_benchmarks,
+       Map.put(socket.assigns.expanded_benchmarks, key, not current)
+     )}
   end
 
   @impl true
@@ -167,89 +140,13 @@ defmodule AnythingCompareWeb.CatalogLive.Compare do
     end
   end
 
-  defp order_schema(schema) do
-    @spec_order
-    |> Enum.map(fn key -> {key, schema[key]} end)
-    |> Enum.filter(fn {_, v} -> v != nil end)
-  end
-
-  defp group_schema(ordered_schema) do
-    @spec_groups
-    |> Enum.map(fn {group_name, group_keys} ->
-      matched = Enum.filter(ordered_schema, fn {k, _} -> k in group_keys end)
-      {group_name, matched}
-    end)
-    |> Enum.filter(fn {_, specs} -> specs != [] end)
-    |> then(fn grouped ->
-      # Collect keys that appear in ordered_schema but not in any group
-      grouped_keys = Enum.flat_map(grouped, fn {_, specs} -> Enum.map(specs, &elem(&1, 0)) end)
-      ungrouped = Enum.reject(ordered_schema, fn {k, _} -> k in grouped_keys end)
-
-      if ungrouped != [] do
-        grouped ++ [{"Other", ungrouped}]
-      else
-        grouped
-      end
-    end)
-  end
-
   defp swap_candidates(all_products, current_slug) do
     Enum.reject(all_products, &(&1.slug == current_slug))
   end
 
-  # Determine which numeric values are "higher-is-better" vs "lower-is-better"
-  defp higher_is_better?(spec_key) do
-    spec_key in ~w(
-      display_size refresh_rate ram_gb storage_gb battery_mah charging_w
-      camera_main_mp camera_ultrawide_mp camera_telephoto_mp front_camera_mp
-      stability
-    )
-  end
-
-  # Find the "best" value among products for a spec key
-  defp best_value(spec_key, products) do
-    values =
-      products
-      |> Enum.map(fn p -> Map.get(p.specs, spec_key) end)
-      |> Enum.filter(&is_number/1)
-
-    if values == [] do
-      nil
-    else
-      if higher_is_better?(spec_key), do: Enum.max(values), else: Enum.min(values)
-    end
-  end
-
-  # Check if all values for given spec are the same across products
-  defp all_same?(spec_key, products) do
-    values =
-      products
-      |> Enum.map(fn p -> normalize_value(p.specs[spec_key]) end)
-      |> Enum.uniq()
-
-    length(values) <= 1
-  end
-
-  defp normalize_value(nil), do: ""
-  defp normalize_value(value), do: "#{value}"
-
-  # Compute bar width for a numeric value relative to the group
-  defp bar_width(value, spec_key, products) do
-    values =
-      products
-      |> Enum.map(fn p -> Map.get(p.specs, spec_key) end)
-      |> Enum.filter(&is_number/1)
-
-    cond do
-      values == [] || is_nil(value) ->
-        0
-
-      true ->
-        max_val = Enum.max(values)
-        min_val = Enum.min(values)
-        range = max_val - min_val
-        if range == 0, do: 100, else: round((value - min_val) / range * 85) + 15
-    end
+  defp diff_specs(products) do
+    Comparisons.diff_keys(products)
+    |> MapSet.new()
   end
 
   @impl true
@@ -380,7 +277,7 @@ defmodule AnythingCompareWeb.CatalogLive.Compare do
                       <%!-- Spec rows --%>
                       <%= for {spec_key, spec_meta} <- specs do %>
                         <% diffs_visible = @highlight_diffs %>
-                        <% row_diffs = diffs_visible && !all_same?(spec_key, @products) %>
+                        <% row_diffs = diffs_visible && spec_key in @diff_set %>
 
                         <tr class={[
                           "border-t border-base-200/80 transition-colors duration-300",
@@ -397,7 +294,9 @@ defmodule AnythingCompareWeb.CatalogLive.Compare do
 
                           <%= for product <- @products do %>
                             <% value = Map.get(product.specs, spec_key) %>
-                            <% is_best = is_number(value) && best_value(spec_key, @products) == value %>
+                            <% is_best =
+                              is_number(value) &&
+                                Comparisons.best_value(spec_key, @products, @schema_map) == value %>
                             <td class={[
                               "px-2 sm:px-3 py-2 sm:py-3 transition-colors duration-300 compare-cell",
                               row_diffs && "diff-highlight"
@@ -409,7 +308,9 @@ defmodule AnythingCompareWeb.CatalogLive.Compare do
                                 products={@products}
                                 spec_key={spec_key}
                                 product_slug={product.slug}
-                                expanded={Map.get(@expanded_benchmarks, "#{product.slug}-#{spec_key}", false)}
+                                expanded={
+                                  Map.get(@expanded_benchmarks, "#{product.slug}-#{spec_key}", false)
+                                }
                               />
                             </td>
                           <% end %>
@@ -615,7 +516,7 @@ defmodule AnythingCompareWeb.CatalogLive.Compare do
 
           <div class="flex items-center gap-1">
             <span class="font-semibold text-sm tabular-nums">
-              <%= if avg, do: "#{avg}%", else: "—" %>
+              {if avg, do: "#{avg}%", else: "—"}
             </span>
             <span class="text-[10px] opacity-40">
               ({length(@value)} sources)
@@ -626,7 +527,10 @@ defmodule AnythingCompareWeb.CatalogLive.Compare do
               class="ml-auto btn btn-ghost btn-xs p-0.5 min-h-0 h-5 w-5 opacity-40 hover:opacity-100 transition-opacity"
               title="Show sources"
             >
-              <.icon name={if @expanded, do: "hero-chevron-up", else: "hero-chevron-down"} class="w-3 h-3" />
+              <.icon
+                name={if @expanded, do: "hero-chevron-up", else: "hero-chevron-down"}
+                class="w-3 h-3"
+              />
             </button>
           </div>
 
@@ -650,7 +554,7 @@ defmodule AnythingCompareWeb.CatalogLive.Compare do
           <% end %>
         <% is_number(@value) -> %>
           <% show_bar = @meta["visual"] == "bar" %>
-          <% bar_w = if show_bar, do: bar_width(@value, @spec_key, @products) %>
+          <% bar_w = if show_bar, do: Comparisons.bar_width(@value, @spec_key, @products) %>
           <div class="flex items-center gap-2">
             <span class={[
               "font-semibold tabular-nums text-sm",
